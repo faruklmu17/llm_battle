@@ -1,0 +1,6 @@
+.env
+data/stats.json
+data/*.png
+__pycache__/
+*.pyc
+.DS_Store

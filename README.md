@@ -1,53 +1,55 @@
-# llm_battle
+# LLM Battle Arena 🏆
 
-Yes, exactly! If you are using an AI-integrated development environment (like Cursor or similar tools), you usually have a model selector in the chat interface that allows you to swap between different "brains."
+![Performance Chart](data/performance_chart.png)
 
-Here is how that works for our conversation:
+An autonomous "AI Arena" where Large Language Models (LLMs) compete in turn-based games. This repo orchestrates battles between models like **Google Gemini** and **Llama/Mixtral (via Groq)** to determine which AI has the superior strategic logic.
 
-Switching is possible: You can usually click on the model name (like "Gemini 2.0 Flash") and select Claude 3.5 Sonnet, GPT-4o, or others from the dropdown menu.
-What happens when you switch: If you switch to Claude, the "assistant" you're talking to changes. Claude 3.5 Sonnet is highly regarded for its logical reasoning and precise code generation, while Gemini (me) is known for its massive context window (remembering everything in your project) and extreme speed.
-Context stays the same: Usually, the chat history and the files I've already read stay in the "memory" of the session, so the new model will know what we've been working on.
-Pro-tip: Many developers switch to Claude 3.5 Sonnet when they need help with complex logic or tricky refactoring, and then switch back to Gemini when they want to analyze large parts of the codebase at once or do quick documentation tasks!
+## ⚔️ How the Battle Works
 
-I need to create a game where ai will play a game and it will run in a loop to select a model and see which model wins. how do I do that? do not write teh code yet
+The arena follows a strict **Orchestration Loop**:
 
-Thought for 2s
+1.  **Selection**: Two models are selected (e.g., `gemini-flash-latest` vs `llama-3.3-70b-versatile`).
+2.  **State Extraction**: The `TicTacToe` engine generates a visual/textual representation of the board with numbered available moves.
+3.  **Prompting**: The orchestrator sends the board to the active AI with instructions to return **exactly one number** (0-8).
+4.  **Validation**:
+    *   If the AI provides a valid move, the board is updated.
+    *   If the AI provides an invalid move (e.g., taking an occupied spot), it is given up to **3 attempts** to correct itself.
+    *   If the AI is rate-limited, the system uses **Exponential Backoff** (waiting 2s, 4s, 8s...) to recover the turn without failing the match.
+5.  **Termination**: The loop runs until a winner is detected or the board is full (Draw).
 
+## 📊 Result Display & Tracking
 
+*   **Live Viewer**: The console displays the Tic-Tac-Toe board in real-time, showing the "thought" process and move selection of each model.
+*   **JSON Database**: Every match outcome is recorded in `data/stats.json`.
+*   **Performance Chart**: A professional **Dark Mode** bar chart is automatically updated after every game at `data/performance_chart.png`. It tracks:
+    *   **Wins**: Green bars.
+    *   **Losses**: Red bars.
+    *   **Draws/Incomplete**: Yellow bars (includes matches abandoned due to API failure).
+*   **History**: The system maintains a rolling window of the **last 50 matches** to provide a relevant "Competency Ranking."
 
+## 🛠 Setup & Usage
 
-That is a fantastic project idea! This is often called an "AI Arena" or "LLM Battle Ground."
+### 1. Requirements
+```bash
+pip install google-genai groq matplotlib numpy python-dotenv
+```
 
-To build a system where AI models compete against each other in an autonomous loop, you need to set up an architectural framework. Here is how you should structure it:
+### 2. Environment Variables
+Create a `.env` file in the root directory and add your API keys:
+```env
+GEMINI_API_KEY = your_gemini_key_here
+GROQ_API_KEY = your_groq_key_here
+```
+*(Note: `.env` is ignored by git for security).*
 
-1. The Game Definition (The "What")
-First, you need a game with clear rules. It can be:
+### 3. Start a Battle
+```bash
+python3 main.py
+```
 
-Deterministic Games: Tic-Tac-Toe, Connect Four, or Chess (where "winning" is defined by code logic).
-Creative/Subjective Games: A debate, a "who can write a better joke" contest, or a roleplay scenario (where "winning" is decided by a third party).
-2. The Players (The "Who")
-You need a unified interface (a "wrapper"). Since different models (Gemini, Claude, LLaMA) have different API formats, you create a single function that:
-
-Takes the current "Game State" as an input.
-Sends it to the specific model being tested.
-Returns a standardized "Move" (like a JSON object).
-3. The Referee (The "Judge")
-This is the most critical part. You need a way to decide who won:
-
-For Codable Games: A script that checks for three-in-a-row (Tic-Tac-Toe) or checkmate (Chess).
-For Subjective Games: Mention a "Judge Model." You use a highly advanced model (like Claude 3.5 Sonnet or Gemini 1.5 Pro) whose only job is to look at the logs and say: "Model A followed the rules better than Model B, therefore Model A wins."
-4. The Orchestrator (The Loop)
-This is the "Brain" of your project that runs the main loop:
-
-Selection: Pick two models from your list (e.g., LLaMA 3 vs. Gemini Flash).
-Initialize: Set the starting board or prompt.
-Turn-Taking: Prompt Player A, update the state, then prompt Player B.
-Validation: Ensure the AI didn't "cheat" (e.g., trying to place an X on an occupied square).
-Termination: Detect when the game is over.
-Recording: Save the result to a database or a leaderboard.json file.
-Reset: Start the next match.
-5. Tracking (The Leaderboard)
-To see which model is actually the "best," you should implement an Elo Rating system (the same system used in Chess). Every time a model wins, its score goes up; if it loses to a "weaker" model, its score drops significantly.
-
-Does this high-level structure make sense? Once you pick the specific game you want them to play, we can start designing the base classes!
-
+## 📅 Roadmap
+- [x] **Phase 1**: Core Engine & Random Baseline
+- [x] **Phase 2**: Real-world API Integration (Gemini & Groq)
+- [x] **Phase 2.5**: Visual Performance Tracking & Historical Data
+- [ ] **Phase 3**: Elo Rating System (Chess-style rankings)
+- [ ] **Phase 4**: Advanced Games (Connect Four, Chess)
