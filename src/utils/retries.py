@@ -13,7 +13,10 @@ def retry_with_backoff(fn, max_retries=5, initial_delay=2):
         except Exception as e:
             error_str = str(e).lower()
             # Only retry on rate limits or server overloads
-            is_retryable = any(x in error_str for x in ["429", "too many requests", "503", "unavailable", "rate limit"])
+            is_retryable = any(x in error_str for x in [
+                "429", "too many requests", "503", "unavailable", 
+                "rate limit", "overloaded", "busy"
+            ])
             
             if is_retryable and i < max_retries - 1:
                 wait_time = delay + random.uniform(0, 1) # Add jitter

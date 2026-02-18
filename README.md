@@ -1,55 +1,65 @@
-# LLM Battle Arena 🏆
+# LLM Battle Arena: The Four-Way Clash 🏆
 
 ![Performance Chart](data/performance_chart.png)
 
-An autonomous "AI Arena" where Large Language Models (LLMs) compete in turn-based games. This repo orchestrates battles between models like **Google Gemini** and **Llama/Mixtral (via Groq)** to determine which AI has the superior strategic logic.
+An autonomous "AI Arena" where the world's most powerful Large Language Models (LLMs) compete in a strategic round-robin tournament. 
 
-## ⚔️ How the Battle Works
+## ⚔️ The Contenders
+
+This arena orchestrates battles between four distinct AI architectures:
+
+1.  **Google Gemini**: The multimodal powerhouse (e.g., `gemini-flash-latest`).
+2.  **Anthropic Claude**: The reasoned strategist (e.g., `claude-3-5-sonnet-20241022`).
+3.  **DeepSeek**: The high-efficiency challenger (e.g., `deepseek-chat`).
+4.  **Meta Llama (via Groq)**: The open-weights speedster (e.g., `llama-3.3-70b-versatile`).
+
+---
+
+## 🏗 How the Battle Works
 
 The arena follows a strict **Orchestration Loop**:
 
-1.  **Selection**: Two models are selected (e.g., `gemini-flash-latest` vs `llama-3.3-70b-versatile`).
-2.  **State Extraction**: The `TicTacToe` engine generates a visual/textual representation of the board with numbered available moves.
-3.  **Prompting**: The orchestrator sends the board to the active AI with instructions to return **exactly one number** (0-8).
-4.  **Validation**:
-    *   If the AI provides a valid move, the board is updated.
-    *   If the AI provides an invalid move (e.g., taking an occupied spot), it is given up to **3 attempts** to correct itself.
-    *   If the AI is rate-limited, the system uses **Exponential Backoff** (waiting 2s, 4s, 8s...) to recover the turn without failing the match.
-5.  **Termination**: The loop runs until a winner is detected or the board is full (Draw).
+1.  **State Extraction**: The `TicTacToe` engine generates a visual/textual representation of the board with numbered markers.
+2.  **Strategic Prompting**: The system prompts the active AI to analyze the board and return **exactly one number** (0-8) for a winning move.
+3.  **Validation & Retry**: 
+    *   Models have **3 attempts** to provide a valid legal move.
+    *   **Exponential Backoff** (2s, 4s, 8s...) ensures battles aren't lost to API rate limits or server "high demand" spikes.
+4.  **Tracking**: Every match outcome is recorded in `data/stats.json` and visualized.
+
+---
 
 ## 📊 Result Display & Tracking
 
-*   **Live Viewer**: The console displays the Tic-Tac-Toe board in real-time, showing the "thought" process and move selection of each model.
-*   **JSON Database**: Every match outcome is recorded in `data/stats.json`.
-*   **Performance Chart**: A professional **Dark Mode** bar chart is automatically updated after every game at `data/performance_chart.png`. It tracks:
-    *   **Wins**: Green bars.
-    *   **Losses**: Red bars.
-    *   **Draws/Incomplete**: Yellow bars (includes matches abandoned due to API failure).
-*   **History**: The system maintains a rolling window of the **last 50 matches** to provide a relevant "Competency Ranking."
+*   **Live Console View**: Real-time board rendering and AI move logs.
+*   **Historical Data**: A rolling window of the **last 50 matches** is maintained to ensure rankings reflect current model versions.
+*   **Automatic Visualization**: After every match, a premium **Dark Mode** bar chart (see top) is updated to show Wins, Losses, and Draws.
 
-## 🛠 Setup & Usage
+---
+
+## 🛠 Local Setup
 
 ### 1. Requirements
 ```bash
-pip install google-genai groq matplotlib numpy python-dotenv
+pip install google-genai anthropic openai groq matplotlib numpy python-dotenv
 ```
 
-### 2. Environment Variables
-Create a `.env` file in the root directory and add your API keys:
+### 2. Configure Environment
+Create a `.env` file with your API keys:
 ```env
-GEMINI_API_KEY = your_gemini_key_here
-GROQ_API_KEY = your_groq_key_here
+GEMINI_API_KEY = your_key
+CLAUDE_API_KEY = your_key
+DEEPSEEK_API_KEY = your_key
+GROQ_API_KEY = your_key
 ```
-*(Note: `.env` is ignored by git for security).*
 
-### 3. Start a Battle
+### 3. Start the Arena
 ```bash
 python3 main.py
 ```
 
 ## 📅 Roadmap
-- [x] **Phase 1**: Core Engine & Random Baseline
-- [x] **Phase 2**: Real-world API Integration (Gemini & Groq)
-- [x] **Phase 2.5**: Visual Performance Tracking & Historical Data
-- [ ] **Phase 3**: Elo Rating System (Chess-style rankings)
-- [ ] **Phase 4**: Advanced Games (Connect Four, Chess)
+- [x] **Phase 1**: Core Engine & Engine Verification
+- [x] **Phase 2**: Multi-Model SDK Integration (Gemini, Claude, DeepSeek, Groq)
+- [x] **Phase 2.5**: Automated Round-Robin Tournament Logic
+- [ ] **Phase 3**: Chess-style Elo Rating System
+- [ ] **Phase 4**: Advanced Strategic Games (Connect Four, Chess)

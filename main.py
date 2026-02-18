@@ -51,8 +51,20 @@ def start_battle(model_a_name, model_b_name):
     generate_performance_graph()
 
 if __name__ == "__main__":
-    # Restarting Arena...
-    for i in range(1):
-        print(f"\n🚀 TOURNAMENT MATCH {i+1}")
-        start_battle("gemini-flash-latest", "llama-3.3-70b-versatile")
-        print("-" * 40)
+    # The ultimate 4-Model Battle Royale!
+    models = [
+        "gemini-flash-latest",
+        "llama-3.3-70b-versatile",
+        "claude-3-5-sonnet-20241022",
+        "deepseek-chat" # deepseek-v3 or deepseek-reasoner can also be used
+    ]
+    
+    # Run a Round-Robin (Each plays each other)
+    match_num = 1
+    for i in range(len(models)):
+        for j in range(i + 1, len(models)):
+            print(f"\n🚀 TOURNAMENT MATCH {match_num}")
+            # start_battle(models[i], models[j]) # Commented out as requested
+            print(f"Match Setup: {models[i]} vs {models[j]}") 
+            print("-" * 40)
+            match_num += 1

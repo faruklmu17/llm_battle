@@ -1,6 +1,8 @@
 from .base import RandomPlayer
 from .gemini_player import GeminiPlayer
 from .groq_player import GroqPlayer
+from .claude_player import ClaudePlayer
+from .deepseek_player import DeepSeekPlayer
 import os
 from dotenv import load_dotenv
 
@@ -19,6 +21,18 @@ def get_player(model_id: str):
         if not api_key:
             raise ValueError("GEMINI_API_KEY not found in .env")
         return GeminiPlayer(model_id, api_key)
+        
+    elif "claude" in model_id:
+        api_key = os.getenv("CLAUDE_API_KEY")
+        if not api_key:
+            raise ValueError("CLAUDE_API_KEY not found in .env")
+        return ClaudePlayer(model_id, api_key)
+
+    elif "deepseek" in model_id:
+        api_key = os.getenv("DEEPSEEK_API_KEY")
+        if not api_key:
+            raise ValueError("DEEPSEEK_API_KEY not found in .env")
+        return DeepSeekPlayer(model_id, api_key)
         
     elif "llama" in model_id or "mixtral" in model_id:
         # Assuming these are running via Groq for this project
